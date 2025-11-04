@@ -5,15 +5,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 
-import java.util.concurrent.TimeUnit;
-
 public class ObsWebSocketClient {
     private final String websocketUrl;
     private final String password;
 
-    private final Gson gson = new Gson();
-
     private final OkHttpClient client;
+    private final Gson gson;
 
     private WebSocket webSocket;
 
@@ -38,14 +35,11 @@ public class ObsWebSocketClient {
         }
     }
 
-    public ObsWebSocketClient(String host, int port, String password) {
+    public ObsWebSocketClient(OkHttpClient client, Gson gson, String host, int port, String password) {
+        this.client = client;
+        this.gson = gson;
         this.websocketUrl = "ws://" + host + ":" + port;
         this.password = password;
-
-        // Initialize OkHttpClient with a reasonable timeout
-        this.client = new OkHttpClient.Builder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .build();
     }
 
     public void saveReplayBuffer() {

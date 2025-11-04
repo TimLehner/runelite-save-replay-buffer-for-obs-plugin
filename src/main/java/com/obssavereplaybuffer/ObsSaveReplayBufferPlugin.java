@@ -24,6 +24,7 @@
  */
 package com.obssavereplaybuffer;
 
+import com.google.gson.Gson;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
@@ -31,6 +32,7 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ScreenshotTaken;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import okhttp3.OkHttpClient;
 
 import javax.inject.Inject;
 
@@ -46,6 +48,15 @@ public class ObsSaveReplayBufferPlugin extends Plugin
     private ObsSaveReplayBufferConfig config;
 
     private ObsWebSocketClient obsClient;
+
+    private final OkHttpClient client;
+    private final Gson gson;
+
+
+    public ObsSaveReplayBufferPlugin(OkHttpClient client, Gson gson) {
+        this.client = client;
+        this.gson = gson;
+    }
 
     @Provides
     ObsSaveReplayBufferConfig getConfig(ConfigManager configManager)
@@ -77,7 +88,7 @@ public class ObsSaveReplayBufferPlugin extends Plugin
     {
         if (config.saveObsReplayBuffer()) {
             log.debug("Startup OBS Connection");
-            this.obsClient = new ObsWebSocketClient(config.websocketServerHost(), config.websocketPort(), config.websocketPassword());
+            this.obsClient = new ObsWebSocketClient(client, gson, config.websocketServerHost(), config.websocketPort(), config.websocketPassword());
             this.obsClient.connect();
         }
     }
