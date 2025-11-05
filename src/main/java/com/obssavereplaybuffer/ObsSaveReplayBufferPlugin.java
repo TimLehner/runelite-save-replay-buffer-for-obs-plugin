@@ -35,6 +35,9 @@ import net.runelite.client.plugins.PluginDescriptor;
 import okhttp3.OkHttpClient;
 
 import javax.inject.Inject;
+import java.util.Objects;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @PluginDescriptor(
         name = "Save OBS Replay Buffer",
@@ -50,6 +53,9 @@ public class ObsSaveReplayBufferPlugin extends Plugin
     private ObsWebSocketClient obsClient;
 
     @Inject
+    private ScheduledExecutorService scheduledExecutorService;
+
+    @Inject
     private OkHttpClient okHttpClient;
 
     @Inject
@@ -61,22 +67,11 @@ public class ObsSaveReplayBufferPlugin extends Plugin
         return configManager.getConfig(ObsSaveReplayBufferConfig.class);
     }
 
-    private void setTimeout(Runnable runnable, int delaySeconds) {
-        new Thread(() -> {
-            try {
-                Thread.sleep(delaySeconds * 1000L);
-                runnable.run();
-            } catch (InterruptedException e) {
-                runnable.run();
-            }
-        }).start();
-    }
-
     @Subscribe
     private void onScreenshotTaken(ScreenshotTaken event) {
         if (config.saveObsReplayBuffer()) {
             log.debug("Attempting to save OBS Replay Buffer");
-            this.setTimeout(this.obsClient::saveReplayBuffer, config.saveAfterDelay());
+            scheduledExecutorService.schedule(obsClient::saveReplayBuffer, config.saveAfterDelay(), TimeUnit.SECONDS);
         }
     }
 
