@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.obssavereplaybuffer;
+package com.savereplaybufferforobs;
 
 import com.google.gson.Gson;
 import com.google.inject.Provides;
@@ -41,17 +41,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @PluginDescriptor(
-        name = "Save OBS Replay Buffer",
+        name = "Save Replay Buffer for OBS",
         description = "Enable the automatic saving of the OBS Replay Buffer when taking screenshots",
         tags = {"external", "videos", "integration", "OBS"}
 )
 @Slf4j
-public class ObsSaveReplayBufferPlugin extends Plugin
+public class SaveReplayBufferForObsPlugin extends Plugin
 {
     @Inject
-    private ObsSaveReplayBufferConfig config;
+    private SaveReplayBufferForObsConfig config;
 
-    private ObsWebSocketClient obsClient;
+    private WebSocketClientForObs obsClient;
 
     @Inject
     private ScheduledExecutorService scheduledExecutorService;
@@ -63,14 +63,14 @@ public class ObsSaveReplayBufferPlugin extends Plugin
     private Gson gson;
 
     @Provides
-    ObsSaveReplayBufferConfig getConfig(ConfigManager configManager)
+    SaveReplayBufferForObsConfig getConfig(ConfigManager configManager)
     {
-        return configManager.getConfig(ObsSaveReplayBufferConfig.class);
+        return configManager.getConfig(SaveReplayBufferForObsConfig.class);
     }
 
     @Subscribe
     private void onScreenshotTaken(ScreenshotTaken event) {
-        if (config.saveObsReplayBuffer()) {
+        if (config.saveOnScreenshot()) {
             log.debug("Attempting to save OBS Replay Buffer");
             scheduledExecutorService.schedule(obsClient::saveReplayBuffer, config.saveAfterDelay(), TimeUnit.SECONDS);
         }
@@ -81,13 +81,13 @@ public class ObsSaveReplayBufferPlugin extends Plugin
             obsClient.disconnect();
         }
 
-        obsClient = new ObsWebSocketClient(okHttpClient, gson, config.websocketServerHost(), config.websocketPort(), config.websocketPassword());
+        obsClient = new WebSocketClientForObs(okHttpClient, gson, config.websocketServerHost(), config.websocketPort(), config.websocketPassword());
         obsClient.connect();
     }
 
     @Subscribe
     private void onConfigChanged(ConfigChanged event) {
-        if (!Objects.equals(event.getGroup(), "obssavereplaybuffer")) {
+        if (!Objects.equals(event.getGroup(), "savereplaybufferforobs")) {
             return;
         }
 
@@ -97,7 +97,7 @@ public class ObsSaveReplayBufferPlugin extends Plugin
     @Override
     protected void startUp()
     {
-        if (config.saveObsReplayBuffer()) {
+        if (config.saveOnScreenshot()) {
             log.debug("Startup OBS Connection");
             reconnect();
         }

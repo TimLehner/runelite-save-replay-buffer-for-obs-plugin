@@ -1,4 +1,4 @@
-package com.obssavereplaybuffer;
+package com.savereplaybufferforobs;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -13,14 +13,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Slf4j
-public class ObsWebSocketListener extends WebSocketListener {
+public class WebSocketListenerForObs extends WebSocketListener {
     private final String password;
 
     public static final Integer RPC_VERSION = 1;
 
     private final Gson gson;
 
-    public ObsWebSocketListener(Gson gson, String password) {
+    public WebSocketListenerForObs(Gson gson, String password) {
         this.gson = gson;
         this.password = password;
     }

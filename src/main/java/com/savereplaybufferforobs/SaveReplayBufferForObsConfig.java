@@ -22,15 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.obssavereplaybuffer;
+package com.savereplaybufferforobs;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
-@ConfigGroup("obssavereplaybuffer")
-public interface ObsSaveReplayBufferConfig extends Config
+@ConfigGroup("savereplaybufferforobs")
+public interface SaveReplayBufferForObsConfig extends Config
 {
     @ConfigSection(
             name = "OBS WebSocket Options",
@@ -40,12 +40,12 @@ public interface ObsSaveReplayBufferConfig extends Config
     String wsSection = "websocket";
 
     @ConfigItem(
-            keyName = "saveObsReplayBuffer",
+            keyName = "saveOnScreenshot",
             name = "Save on screenshot",
             description = "Attempt to save the OBS replay buffer whenever saving screenshots.",
             position = 0
     )
-    default boolean saveObsReplayBuffer()
+    default boolean saveOnScreenshot()
     {
         return true;
     }
