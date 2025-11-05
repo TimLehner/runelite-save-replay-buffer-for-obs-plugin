@@ -138,6 +138,6 @@ public class WebSocketListenerForObs extends WebSocketListener {
 
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
-        log.error("WebSocket closed with code: {}, reason: {}", code, reason);
+        log.info("WebSocket closed with code: {}, reason: {}", code, reason);
     }
 }
