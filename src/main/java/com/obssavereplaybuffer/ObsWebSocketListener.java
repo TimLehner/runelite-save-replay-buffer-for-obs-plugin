@@ -7,7 +7,6 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -66,6 +65,34 @@ public class ObsWebSocketListener extends WebSocketListener {
     }
 
     private String computeAuthentication(String salt, String challenge) {
+        // this function is copied from obs-websocket-java
+        // https://github.com/obs-websocket-community-projects/obs-websocket-java/blob/2ff769d4819935aac44fbf38e003773934ddbb55/client/src/main/java/io/obswebsocket/community/client/authenticator/AuthenticatorImpl.java#L20
+
+        //        MIT License
+        //
+        //        Copyright (c) 2020 Twasi
+        //        Copyright (c) 2021 Christophe Carvalho Vilas-Boas
+        //        Copyright (c) 2021 TinaTiel
+        //        Copyright (c) 2021 Pjiesco
+        //
+        //        Permission is hereby granted, free of charge, to any person obtaining a copy
+        //        of this software and associated documentation files (the "Software"), to deal
+        //        in the Software without restriction, including without limitation the rights
+        //        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        //        copies of the Software, and to permit persons to whom the Software is
+        //        furnished to do so, subject to the following conditions:
+        //
+        //        The above copyright notice and this permission notice shall be included in all
+        //        copies or substantial portions of the Software.
+        //
+        //                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        //        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        //        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        //        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        //        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        //                OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        //        SOFTWARE.
+
         // Sanitize
         if (salt == null || challenge == null) {
             throw new IllegalArgumentException("Password, salt, and challenge are required");
