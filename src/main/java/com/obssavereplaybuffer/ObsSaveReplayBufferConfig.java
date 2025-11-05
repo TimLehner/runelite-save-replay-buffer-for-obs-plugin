@@ -66,7 +66,8 @@ public interface ObsSaveReplayBufferConfig extends Config
             name = "WebSocket Server Password",
             description = "The WebSocket Server Password displayed in OBS Tools -> WebSocket Server Settings",
             position = 0,
-            section = wsSection
+            section = wsSection,
+            secret = true
     )
     default String websocketPassword()
     {
