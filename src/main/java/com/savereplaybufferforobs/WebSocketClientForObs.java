@@ -1,11 +1,11 @@
-package com.obssavereplaybuffer;
+package com.savereplaybufferforobs;
 
 import com.google.gson.Gson;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 
-public class ObsWebSocketClient {
+public class WebSocketClientForObs {
     private final String websocketUrl;
     private final String password;
 
@@ -35,7 +35,7 @@ public class ObsWebSocketClient {
         }
     }
 
-    public ObsWebSocketClient(OkHttpClient client, Gson gson, String host, int port, String password) {
+    public WebSocketClientForObs(OkHttpClient client, Gson gson, String host, int port, String password) {
         this.client = client;
         this.gson = gson;
         this.websocketUrl = "ws://" + host + ":" + port;
@@ -52,7 +52,7 @@ public class ObsWebSocketClient {
         Request request = new Request.Builder()
                 .url(websocketUrl)
                 .build();
-        this.webSocket = client.newWebSocket(request, new ObsWebSocketListener(gson, password));
+        this.webSocket = client.newWebSocket(request, new WebSocketListenerForObs(gson, password));
     }
 
     public void disconnect() {

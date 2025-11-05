@@ -1,6 +1,8 @@
-# Runelite OBS Replay Buffer Plugin
+# Runelite Save Replay Buffer For OBS Plugin
 
 This plugin is designed to automatically save any existing OBS Replay Buffer.
+
+> Disclaimer: this project is not developed, maintained, affiliated or otherwise endorsed by OBS or the OBS Project
 
 ## Usage
 
