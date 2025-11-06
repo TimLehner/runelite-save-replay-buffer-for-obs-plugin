@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.PluginMessage;
 import net.runelite.client.events.ScreenshotTaken;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -39,6 +40,9 @@ import javax.inject.Inject;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static com.savereplaybufferforobs.Constants.ALLOWED_OBS_API_METHODS;
+import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
 
 @PluginDescriptor(
         name = "Save Replay Buffer for OBS",
@@ -87,11 +91,24 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     @Subscribe
     private void onConfigChanged(ConfigChanged event) {
-        if (!Objects.equals(event.getGroup(), "savereplaybufferforobs")) {
+        if (!Objects.equals(event.getGroup(), PLUGIN_IDENTIFIER)) {
             return;
         }
 
         reconnect();
+    }
+
+    @Subscribe
+    private void onPluginMessage(PluginMessage event) {
+        if (!config.saveOnPluginMessage() || !Objects.equals(event.getNamespace(), PLUGIN_IDENTIFIER)) {
+            return;
+        }
+
+        String requestMethod = event.getName();
+        if (ALLOWED_OBS_API_METHODS.contains(requestMethod)) {
+            // temporarily require whitelist of commands. Perhaps we should expand the plugin scope to generic OBS integration?
+            obsClient.makeOBSRequest(requestMethod, "runelite-clip-req", event.getData());
+        }
     }
 
     @Override

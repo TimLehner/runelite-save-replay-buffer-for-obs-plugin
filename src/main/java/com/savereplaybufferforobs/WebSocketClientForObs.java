@@ -42,10 +42,14 @@ public class WebSocketClientForObs {
         this.password = password;
     }
 
-    public void saveReplayBuffer() {
-        ObsRequest saveReplayBufferRequest = new ObsRequest("SaveReplayBuffer", "runelite-clip-req", new Object());
+    public void makeOBSRequest(String requestType, String requestId, Object requestData) {
+        ObsRequest saveReplayBufferRequest = new ObsRequest(requestType, requestId, requestData);
         String jsonPayload = gson.toJson(saveReplayBufferRequest);
         this.webSocket.send(jsonPayload);
+    }
+
+    public void saveReplayBuffer() {
+        makeOBSRequest("SaveReplayBuffer", "runelite-clip-req", new Object());
     }
 
     public void connect() {

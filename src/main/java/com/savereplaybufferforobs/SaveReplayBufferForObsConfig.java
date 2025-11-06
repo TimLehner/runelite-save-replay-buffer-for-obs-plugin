@@ -29,7 +29,9 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
-@ConfigGroup("savereplaybufferforobs")
+import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
+
+@ConfigGroup(PLUGIN_IDENTIFIER)
 public interface SaveReplayBufferForObsConfig extends Config
 {
     @ConfigSection(
@@ -59,6 +61,17 @@ public interface SaveReplayBufferForObsConfig extends Config
     default int saveAfterDelay()
     {
         return 0;
+    }
+
+    @ConfigItem(
+            keyName = "saveOnPluginMessage",
+            name = "Save on Plugin Messages (advanced)",
+            description = "Allow other plugins to send messages to immediately save the OBS replay buffer with custom delay.",
+            position = 2
+    )
+    default boolean saveOnPluginMessage()
+    {
+        return false;
     }
 
     @ConfigItem(
