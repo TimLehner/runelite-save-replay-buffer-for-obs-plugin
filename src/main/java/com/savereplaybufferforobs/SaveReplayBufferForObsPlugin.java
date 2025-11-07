@@ -162,10 +162,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
     @Override
     protected void startUp()
     {
-        if (config.saveOnScreenshot()) {
-            log.debug("Startup OBS Connection");
-            reconnect();
-        }
+        log.debug("Startup OBS Connection");
+        reconnect();
     }
 
     @Override
