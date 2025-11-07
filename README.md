@@ -87,12 +87,13 @@ In RuneLite, open the Replay Buffer plugin settings (click the ⚙️ cog icon).
 
 ![Image of Save Replay Buffer plugin settings cog](./docs/img/PluginSettingsCogIndicator.png)
 
-Paste the password you copied from OBS into the plugin.
+Paste the password you copied from OBS into the plugin. 
 
 ![Image of Save Replay Buffer for OBS with previously generated password added in](./docs/img/WebSocketPasswordLocation.png)
 
 
 > Note the plugin will attempt to reconnect whenever the configuration values change, but this may require leaving the input box
+> 
 > Alternatively, have you tried turning it off and on again?
 
 If everything is set up correctly, you’ll see a successful connection in your OBS WebSocket settings.
@@ -103,6 +104,7 @@ If everything is set up correctly, you’ll see a successful connection in your 
 ### 6. Optional: Fine-Tune Replay Timing
 
 You can add a delay before saving the replay to include action happening after the moment a screenshot would be taken in Runelite.
+This can be useful to also capture live reactions to the event, and not having clips that end too abruptly.
 
 ![Image of Save after delay option highlighted](./docs/img/FineTuneDelay.png)
 
@@ -115,10 +117,16 @@ Your clip will include 2 minutes before and 1 minute after the trigger (such as 
 
 A clip is automatically saved when RuneLite takes a screenshot.
 
-Any option in the RuneLite Screenshot plugin that is ticked trigger a clip to save.
+Any option in the RuneLite Screenshot plugin that is ticked triggers a clip to save.
 
 ![Image of Screenshot base plugin options](./docs/img/ScreenshotPluginReferenceSettings.png)
 
+Fine-grained configuration to save clips for only specific events can be done in "Events to capture" section.
+
+![Image of fine-grained configuration options](./docs/img/FineGrainedOptionsExample.png)
+
+It is recommended to either disable `All screenshots` or ensure there is no overlap, 
+otherwise you might try to save buffers multiple times for the same event.
 
 ## Tips and Advanced Guides
 
