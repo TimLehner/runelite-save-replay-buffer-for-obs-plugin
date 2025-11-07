@@ -87,6 +87,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        HIGH_GAMBLE,
         UNTRADEABLE_DROP,
         VALUABLE_DROP,
         DUELS,
@@ -125,6 +126,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.valuableDropDelay();
             case UNTRADEABLE_DROP:
                 return config.untradeableDropDelay();
+            case HIGH_GAMBLE:
+                return config.highGambleDelay();
             default:
                 return 0;
         }
@@ -370,6 +373,12 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 }
                 queuedScreenshotType = EventType.LEVEL_UP;
                 break;
+            case InterfaceID.OBJECTBOX:
+                if (!(config.saveLevels() || config.saveHighGamble()))
+                {
+                    return;
+                }
+                break;
             case InterfaceID.MISC_COLLECTION:
                 if (!config.saveKingdom())
                 {
@@ -391,10 +400,9 @@ public class SaveReplayBufferForObsPlugin extends Plugin
             }
         }
 
-        if (queuedScreenshotType != null) {
+        if (queuedScreenshotType != null && !shouldTakeScreenshot) {
             saveReplayBuffer(queuedScreenshotType);
             queuedScreenshotType = null;
-            shouldTakeScreenshot = false;
         }
     }
 
@@ -416,9 +424,40 @@ public class SaveReplayBufferForObsPlugin extends Plugin
             return;
         }
 
-        saveReplayBuffer(queuedScreenshotType);
-        queuedScreenshotType = null;
-        shouldTakeScreenshot = false;
+        if (client.getWidget(InterfaceID.LevelupDisplay.TEXT2) != null)
+        {
+            queuedScreenshotType = EventType.LEVEL_UP;
+        }
+        else if (client.getWidget(InterfaceID.Objectbox.TEXT) != null)
+        {
+            String text = client.getWidget(InterfaceID.Objectbox.TEXT).getText();
+            if (Text.removeTags(text).contains("High level gamble"))
+            {
+                if (config.saveHighGamble())
+                {
+                    queuedScreenshotType = EventType.HIGH_GAMBLE;
+                }
+            }
+            else
+            {
+                if (config.saveLevels())
+                {
+                    queuedScreenshotType = EventType.LEVEL_UP;
+                }
+            }
+        }
+        else if (client.getWidget(InterfaceID.Questscroll.QUEST_TITLE) != null)
+        {
+            queuedScreenshotType = EventType.CHEST_REWARD;
+        }
+
+        if (queuedScreenshotType != null)
+        {
+            saveReplayBuffer(queuedScreenshotType);
+            queuedScreenshotType = null;
+            shouldTakeScreenshot = false;
+        }
+
     }
 
 }

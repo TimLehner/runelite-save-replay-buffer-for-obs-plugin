@@ -224,6 +224,18 @@ public interface SaveReplayBufferForObsConfig extends Config
         return false;
     }
 
+    @ConfigItem(
+            keyName = "saveBaHighGamble",
+            name = "BA high gambles",
+            description = "Attempt to save the OBS replay buffer for a high gamble at Barbarian Assault.",
+            position = 18,
+            section = whatSection
+    )
+    default boolean saveHighGamble()
+    {
+        return false;
+    }
+
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
@@ -329,6 +341,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int untradeableDropDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "highGambleDelay",
+            name = "High gamble",
+            description = "Delay the attempt to save the OBS replay buffer after a high gamble at Barbarian Assault.",
+            position = 14,
+            section = delaySection
+    )
+    default int highGambleDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",
