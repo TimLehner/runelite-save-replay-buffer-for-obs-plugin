@@ -78,12 +78,14 @@ public class SaveReplayBufferForObsPlugin extends Plugin
         return configManager.getConfig(SaveReplayBufferForObsConfig.class);
     }
 
-    protected enum EventType {
+    protected enum EventType
+    {
         DEATH,
         SCREENSHOT
     }
 
-    private int getDelayTime(EventType eventType) {
+    private int getDelayTime(EventType eventType)
+    {
         switch (eventType) {
             case DEATH:
                 return config.deathDelay();
@@ -94,19 +96,22 @@ public class SaveReplayBufferForObsPlugin extends Plugin
         }
     }
 
-    private void saveReplayBuffer(EventType eventType) {
+    private void saveReplayBuffer(EventType eventType)
+    {
         log.debug("Attempting to save OBS Replay Buffer");
         scheduledExecutorService.schedule(obsClient::saveReplayBuffer, getDelayTime(eventType), TimeUnit.SECONDS);
     }
 
     @Subscribe
-    private void onScreenshotTaken(ScreenshotTaken event) {
+    private void onScreenshotTaken(ScreenshotTaken event)
+    {
         if (config.saveOnScreenshot()) {
             saveReplayBuffer(EventType.SCREENSHOT);
         }
     }
 
-    private void reconnect() {
+    private void reconnect()
+    {
         if (obsClient != null) {
             obsClient.disconnect();
         }
@@ -116,7 +121,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
     }
 
     @Subscribe
-    private void onConfigChanged(ConfigChanged event) {
+    private void onConfigChanged(ConfigChanged event)
+    {
         if (!Objects.equals(event.getGroup(), PLUGIN_IDENTIFIER)) {
             return;
         }
@@ -125,7 +131,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
     }
 
     @Subscribe
-    private void onPluginMessage(PluginMessage event) {
+    private void onPluginMessage(PluginMessage event)
+    {
         if (!config.saveOnPluginMessage() || !Objects.equals(event.getNamespace(), PLUGIN_IDENTIFIER)) {
             return;
         }

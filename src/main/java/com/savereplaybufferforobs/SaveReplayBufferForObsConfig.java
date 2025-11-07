@@ -115,10 +115,7 @@ public interface SaveReplayBufferForObsConfig extends Config
             position = 0,
             section = delaySection
     )
-    default int screenshotDelay()
-    {
-        return 0;
-    }
+    default int screenshotDelay() { return 0; }
 
     @ConfigItem(
             keyName = "deathDelay",
@@ -127,10 +124,7 @@ public interface SaveReplayBufferForObsConfig extends Config
             position = 1,
             section = delaySection
     )
-    default int deathDelay()
-    {
-        return 0;
-    }
+    default int deathDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",
@@ -171,8 +165,5 @@ public interface SaveReplayBufferForObsConfig extends Config
             position = 2,
             section = wsSection
     )
-    default String websocketServerHost()
-    {
-        return "localhost";
-    }
+    default String websocketServerHost() { return "localhost"; }
 }
