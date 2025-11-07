@@ -185,6 +185,32 @@ public interface SaveReplayBufferForObsConfig extends Config
         return false;
     }
 
+    @ConfigItem(
+            keyName = "saveValuableDrop",
+            name = "Valuable drops",
+            description = "Attempt to save the OBS replay buffer when you receive a valuable drop.<br>"
+                    + "Requires 'Loot drop notifications' to be enabled in the RuneScape settings.",
+            position = 14,
+            section = whatSection
+    )
+    default boolean saveValuableDrop()
+    {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "valuableDropThreshold",
+            name = "Valuable threshold",
+            description = "The minimum value to save screenshots of valuable drops.<br>"
+                    + "Requires 'Minimum item value needed for loot notification' to be set to a lesser or equal value in the RuneScape settings.",
+            position = 15,
+            section = whatSection
+    )
+    default int valuableDropThreshold()
+    {
+        return 0;
+    }
+
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
@@ -272,6 +298,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int duelsDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "valuableDropDelay",
+            name = "Valuable drops",
+            description = "Delay the attempt to save the OBS replay buffer after valuable drops over threshold.",
+            position = 14,
+            section = delaySection
+    )
+    default int valuableDropDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",

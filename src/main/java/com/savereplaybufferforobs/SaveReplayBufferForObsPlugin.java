@@ -87,6 +87,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        VALUABLE_DROP,
         DUELS,
         BOSS_KILL,
         PVP_KILL,
@@ -119,6 +120,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.bossKillDelay();
             case DUELS:
                 return config.duelsDelay();
+            case VALUABLE_DROP:
+                return config.valuableDropDelay();
             default:
                 return 0;
         }
@@ -267,6 +270,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
             "You feel something weird sneaking into your backpack",
             "You have a funny feeling like you would have been followed");
     private static final Pattern BOSSKILL_MESSAGE_PATTERN = Pattern.compile("Your (.+) (?:kill|success) count is: ?<col=[0-9a-f]{6}>([0-9,]+)</col>");
+    private static final Pattern VALUABLE_DROP_PATTERN = Pattern.compile(".*Valuable drop: ([^<>]+?\\(((?:\\d+,?)+) coins\\))(?:</col>)?");
     private static final Pattern DUEL_END_PATTERN = Pattern.compile("You have now (won|lost) ([0-9,]+) duels?\\.");
 
 
@@ -309,6 +313,18 @@ public class SaveReplayBufferForObsPlugin extends Plugin
             }
         }
 
+        if (config.saveValuableDrop())
+        {
+            Matcher m = VALUABLE_DROP_PATTERN.matcher(chatMessage);
+            if (m.matches())
+            {
+                int valuableDropValue = Integer.parseInt(m.group(2).replace(",", ""));
+                if (valuableDropValue >= config.valuableDropThreshold())
+                {
+                    saveReplayBuffer(EventType.VALUABLE_DROP);
+                }
+            }
+        }
     }
 
     @Subscribe
