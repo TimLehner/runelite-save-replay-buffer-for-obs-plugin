@@ -126,6 +126,18 @@ public interface SaveReplayBufferForObsConfig extends Config
     }
 
     @ConfigItem(
+            keyName = "saveBossKills",
+            name = "Boss kills",
+            description = "Attempt to save the OBS replay buffer for boss kills.",
+            position = 9,
+            section = whatSection
+    )
+    default boolean saveBossKills()
+    {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "savePlayerDeath",
             name = "Player Deaths",
             description = "Attempt to save the OBS replay buffer whenever you die.",
@@ -221,6 +233,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int pvpKillDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "bossKillDelay",
+            name = "Boss kill",
+            description = "Delay the attempt to save the OBS replay buffer after boss kills.",
+            position = 6,
+            section = delaySection
+    )
+    default int bossKillDelay() { return 0; }
 
     @ConfigItem(
             keyName = "deathDelay",

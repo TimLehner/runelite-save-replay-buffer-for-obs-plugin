@@ -43,6 +43,7 @@ import net.runelite.client.events.PluginMessage;
 import net.runelite.client.events.ScreenshotTaken;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.Text;
 import okhttp3.OkHttpClient;
 
 import javax.inject.Inject;
@@ -50,6 +51,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.savereplaybufferforobs.Constants.ALLOWED_OBS_API_METHODS;
 import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
@@ -84,6 +87,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        BOSS_KILL,
         PVP_KILL,
         PET,
         KINGDOM,
@@ -110,6 +114,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.petDelay();
             case PVP_KILL:
                 return config.pvpKillDelay();
+            case BOSS_KILL:
+                return config.bossKillDelay();
             default:
                 return 0;
         }
@@ -257,6 +263,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
     private static final ImmutableList<String> PET_MESSAGES = ImmutableList.of("You have a funny feeling like you're being followed",
             "You feel something weird sneaking into your backpack",
             "You have a funny feeling like you would have been followed");
+    private static final Pattern BOSSKILL_MESSAGE_PATTERN = Pattern.compile("Your (.+) (?:kill|success) count is: ?<col=[0-9a-f]{6}>([0-9,]+)</col>");
+
 
     @Subscribe
     public void onChatMessage(ChatMessage event)
@@ -277,6 +285,15 @@ public class SaveReplayBufferForObsPlugin extends Plugin
         if (PET_MESSAGES.stream().anyMatch(chatMessage::contains) && config.savePet())
         {
             saveReplayBuffer(EventType.PET);
+        }
+
+        if (config.saveBossKills())
+        {
+            Matcher m = BOSSKILL_MESSAGE_PATTERN.matcher(chatMessage);
+            if (m.find())
+            {
+                saveReplayBuffer(EventType.BOSS_KILL);
+            }
         }
 
     }
