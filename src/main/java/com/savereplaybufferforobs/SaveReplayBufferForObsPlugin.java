@@ -24,6 +24,7 @@
  */
 package com.savereplaybufferforobs;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.inject.Provides;
@@ -82,6 +83,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        PET,
         KINGDOM,
         LEVEL_UP,
         CHEST_REWARD,
@@ -102,6 +104,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.deathDelay();
             case KINGDOM:
                 return config.kingdomDelay();
+            case PET:
+                return config.petDelay();
             default:
                 return 0;
         }
@@ -248,11 +252,16 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     private static final String CHEST_LOOTED_MESSAGE = "You find some treasure in the chest!";
     private static final Map<Integer, String> CHEST_LOOT_EVENTS = ImmutableMap.of(12127, "The Gauntlet");
+    private static final ImmutableList<String> PET_MESSAGES = ImmutableList.of("You have a funny feeling like you're being followed",
+            "You feel something weird sneaking into your backpack",
+            "You have a funny feeling like you would have been followed");
 
     @Subscribe
-    public void onChatMessage(ChatMessage chatMessage)
+    public void onChatMessage(ChatMessage event)
     {
         // original source https://github.com/runelite/runelite/blob/f448dc9d0d0be8553500c2e992afabe643b57b2f/runelite-client/src/main/java/net/runelite/client/plugins/screenshot/ScreenshotPlugin.java#L349
+        String chatMessage = event.getMessage();
+
         if (chatMessage.equals(CHEST_LOOTED_MESSAGE) && config.saveRewards())
         {
             final int regionID = client.getLocalPlayer().getWorldLocation().getRegionID();
@@ -262,6 +271,12 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 saveReplayBuffer(EventType.CHEST_REWARD);
             }
         }
+
+        if (PET_MESSAGES.stream().anyMatch(chatMessage::contains) && config.savePet())
+        {
+            saveReplayBuffer(EventType.PET);
+        }
+
     }
 
     @Subscribe

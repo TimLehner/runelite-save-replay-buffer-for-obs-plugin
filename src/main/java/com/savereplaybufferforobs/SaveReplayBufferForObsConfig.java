@@ -102,6 +102,18 @@ public interface SaveReplayBufferForObsConfig extends Config
     }
 
     @ConfigItem(
+            keyName = "savePet",
+            name = "Pets",
+            description = "Attempt to save the OBS replay buffer when receiving pets.",
+            position = 6,
+            section = whatSection
+    )
+    default boolean savePet()
+    {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "savePlayerDeath",
             name = "Player Deaths",
             description = "Attempt to save the OBS replay buffer whenever you die.",
@@ -179,6 +191,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int kingdomDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "petDelay",
+            name = "Pets",
+            description = "Delay the attempt to save the OBS replay buffer after receiving pets.",
+            position = 4,
+            section = delaySection
+    )
+    default int petDelay() { return 0; }
 
     @ConfigItem(
             keyName = "deathDelay",
