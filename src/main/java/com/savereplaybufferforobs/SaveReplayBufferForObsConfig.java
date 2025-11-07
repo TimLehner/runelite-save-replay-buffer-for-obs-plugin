@@ -173,6 +173,18 @@ public interface SaveReplayBufferForObsConfig extends Config
         return false;
     }
 
+    @ConfigItem(
+            keyName = "saveDuels",
+            name = "Duels",
+            description = "Attempt to save the OBS replay buffer after duels.",
+            position = 13,
+            section = whatSection
+    )
+    default boolean saveDuels()
+    {
+        return false;
+    }
+
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
@@ -251,6 +263,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int deathDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "duelsDelay",
+            name = "Duels",
+            description = "Delay the attempt to save the OBS replay buffer after duels.",
+            position = 13,
+            section = delaySection
+    )
+    default int duelsDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",
