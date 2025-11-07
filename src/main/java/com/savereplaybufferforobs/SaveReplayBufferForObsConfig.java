@@ -249,6 +249,18 @@ public interface SaveReplayBufferForObsConfig extends Config
         return false;
     }
 
+    @ConfigItem(
+            keyName = "saveCombatAchievements",
+            name = "Combat achievements",
+            description = "Attempt to save the OBS replay buffer when completing a combat achievements task.",
+            position = 20,
+            section = whatSection
+    )
+    default boolean saveCombatAchievements()
+    {
+        return false;
+    }
+
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
@@ -372,6 +384,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int collectionLogDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "combatAchievementDelay",
+            name = "Combat achievements",
+            description = "Delay the attempt to save the OBS replay buffer after completing a combat achievement.",
+            position = 16,
+            section = delaySection
+    )
+    default int combatAchievementDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",

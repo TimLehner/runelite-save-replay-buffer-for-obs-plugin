@@ -88,6 +88,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        COMBAT_ACHIEVEMENT,
         COLLECTION_LOG,
         HIGH_GAMBLE,
         UNTRADEABLE_DROP,
@@ -132,6 +133,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.highGambleDelay();
             case COLLECTION_LOG:
                 return config.collectionLogDelay();
+            case COMBAT_ACHIEVEMENT:
+                return config.combatAchievementDelay();
             default:
                 return 0;
         }
@@ -351,6 +354,11 @@ public class SaveReplayBufferForObsPlugin extends Plugin
         if (chatMessage.startsWith(COLLECTION_LOG_TEXT) && client.getVarbitValue(VarbitID.OPTION_COLLECTION_NEW_ITEM) == 1 && config.saveCollectionLog())
         {
             saveReplayBuffer(EventType.COLLECTION_LOG);
+        }
+
+        if (chatMessage.contains("combat task") && config.saveCombatAchievements() && client.getVarbitValue(VarbitID.CA_TASK_POPUP) == 1)
+        {
+            saveReplayBuffer(EventType.COMBAT_ACHIEVEMENT);
         }
     }
 
