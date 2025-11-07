@@ -88,6 +88,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin
 
     protected enum EventType
     {
+        WILDERNESS_LOOT_CHEST,
         COMBAT_ACHIEVEMENT,
         COLLECTION_LOG,
         HIGH_GAMBLE,
@@ -135,6 +136,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                 return config.collectionLogDelay();
             case COMBAT_ACHIEVEMENT:
                 return config.combatAchievementDelay();
+            case WILDERNESS_LOOT_CHEST:
+                return config.wildernessLootChestDelay();
             default:
                 return 0;
         }
@@ -403,6 +406,13 @@ public class SaveReplayBufferForObsPlugin extends Plugin
                     return;
                 }
                 queuedScreenshotType = EventType.KINGDOM;
+                break;
+            case InterfaceID.WILDY_LOOT_CHEST:
+                if (!config.saveWildernessLootChest())
+                {
+                    return;
+                }
+                queuedScreenshotType = EventType.WILDERNESS_LOOT_CHEST;
                 break;
         }
 

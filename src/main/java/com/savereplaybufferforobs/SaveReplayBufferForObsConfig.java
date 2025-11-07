@@ -261,6 +261,18 @@ public interface SaveReplayBufferForObsConfig extends Config
         return false;
     }
 
+    @ConfigItem(
+            keyName = "saveWildernessLootChest",
+            name = "Wilderness loot chest",
+            description = "Attempt to save the OBS replay buffer when opening wilderness loot chest.",
+            position = 22,
+            section = whatSection
+    )
+    default boolean saveWildernessLootChest()
+    {
+        return false;
+    }
+
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
@@ -393,6 +405,15 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = delaySection
     )
     default int combatAchievementDelay() { return 0; }
+
+    @ConfigItem(
+            keyName = "wildernessLootChestDelay",
+            name = "Wilderness loot chest",
+            description = "Delay the attempt to save the OBS replay buffer after opening a wilderness loot chest.",
+            position = 22,
+            section = delaySection
+    )
+    default int wildernessLootChestDelay() { return 0; }
 
     @ConfigSection(
             name = "OBS WebSocket Options",
