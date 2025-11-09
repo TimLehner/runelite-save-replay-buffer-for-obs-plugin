@@ -4,6 +4,12 @@ This plugin is designed to automatically save any existing OBS Replay Buffer.
 
 > Disclaimer: this project is not developed, maintained, affiliated or otherwise endorsed by OBS or the OBS Project
 
+## Features
+
+- Never miss a moment! Automatically capture the replay buffer on key events like the Screenshots plugin,
+- Either capture whenever saving screenshots (all) or set specific criteria for videos, such as only video valuable drops over 1m,
+- In-game overlays displaying Error warnings if something is wrosng with the Replay Buffer connections (see [Error Overlays](#Error-Overlays))
+
 ## Usage
 
 Apart from installing from the Runelite Plugin Hub, this plugin requires:
@@ -127,6 +133,48 @@ Fine-grained configuration to save clips for only specific events can be done in
 
 It is recommended to either disable `All screenshots` or ensure there is no overlap, 
 otherwise you might try to save buffers multiple times for the same event.
+
+## Error Overlays
+
+The plugin can be configured to display warning overlays if something is wrong and the plugin will be unable to save 
+the replay buffer when triggered. 
+
+To enable these, ensure the 'Show connection error overlays' option is enabled in the WebSocket Options.
+
+The next section will show examples of the overlays with a brief description of the problem and solution.
+
+### Troubleshooting Error Overlays
+
+![Unable to connect to the OBS WebSocket Server. Is OBS running and configured?](./docs/img/ErrorOverlayConnRefused.png)
+
+Problem:
+ - OBS is not running,
+ - the OBS WebSocket Server is not enabled, 
+ - the OBS WebSocket Server does not support authentication, and/or
+ - configured WebSocket Server Host/Port are incorrect.
+
+Solution:
+1. Ensure OBS is running with WebSocket Server enabled,
+2. ensure WebSocket Options match OBS 'Show connect info' dialog,
+3. restart the plugin/change WebSocket server configuration (the plugin will not attempt to reconnect until you do so)
+
+![OBS WebSocket connection closed unexpectedly: Authentication failed.](./docs/img/ErrorOverlayWrongPassword.png)
+
+Problem:
+ - The WebSocket Server Password is incorrect
+
+Solution:
+1. Double-check the Password using the 'Show connect info' button in OBS.
+
+![OBS Replay Buffer is not active!](./docs/img/ErrorOverlayReplayBufferOff.png)
+
+> Note this overlay will only appear when the plugin setting 'Check if Replay Buffer is enabled' is enabled.
+
+Problem:
+ - OBS is reporting that the Replay Buffer is not running.
+
+Solution:
+1. Click 'Start Replay Buffer' in OBS.
 
 ## Tips and Advanced Guides
 

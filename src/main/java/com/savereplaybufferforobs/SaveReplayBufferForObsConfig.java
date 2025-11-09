@@ -35,12 +35,12 @@ import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
 public interface SaveReplayBufferForObsConfig extends Config
 {
     @ConfigItem(
-            keyName = "checkReplayBufferEnabled",
-            name = "Check if Replay Buffer is enabled",
-            description = "Display a warning overlay if the Replay Buffer is not started.",
+            keyName = "checkReplayBufferActive",
+            name = "Check if Replay Buffer is active",
+            description = "Display a warning overlay if the Replay Buffer is not actively running.",
             position = 0
     )
-    default boolean checkReplayBufferEnabled()
+    default boolean checkReplayBufferActive()
     {
         return true;
     }
@@ -53,7 +53,7 @@ public interface SaveReplayBufferForObsConfig extends Config
     )
     default int checkReplayBufferFrequency()
     {
-        return 10;
+        return 1;
     }
 
     @ConfigSection(

@@ -205,7 +205,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
                 this
         );
         obsClient.connect();
-        if (config.checkReplayBufferEnabled())
+        if (config.checkReplayBufferActive())
         {
             healthcheck = scheduledExecutorService.scheduleAtFixedRate(obsClient::pingHealth, 1, config.checkReplayBufferFrequency(), TimeUnit.SECONDS);
         }
