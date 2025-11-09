@@ -34,10 +34,32 @@ import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
 @ConfigGroup(PLUGIN_IDENTIFIER)
 public interface SaveReplayBufferForObsConfig extends Config
 {
+    @ConfigItem(
+            keyName = "checkReplayBufferActive",
+            name = "Check if Replay Buffer is active",
+            description = "Display a warning overlay if the Replay Buffer is not actively running.",
+            position = 0
+    )
+    default boolean checkReplayBufferActive()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "checkReplayBufferFrequency",
+            name = "Check every (s)",
+            description = "Specify how frequently the Replay Buffer status should be checked. Minimum 1.",
+            position = 1
+    )
+    default int checkReplayBufferFrequency()
+    {
+        return 1;
+    }
+
     @ConfigSection(
             name = "Events to capture",
             description = "Options for what triggers saving the Replay Buffer",
-            position = 0
+            position = 2
     )
     String whatSection = "what";
 
@@ -288,7 +310,7 @@ public interface SaveReplayBufferForObsConfig extends Config
     @ConfigSection(
             name = "Delay before capture (s)",
             description = "Delay before saving the replay buffer after the event occurs, to capture live reactions to the event",
-            position = 1
+            position = 3
     )
     String delaySection = "delay";
 
@@ -467,4 +489,13 @@ public interface SaveReplayBufferForObsConfig extends Config
             section = wsSection
     )
     default String websocketServerHost() { return "localhost"; }
+
+    @ConfigItem(
+            keyName = "displayErrorOverlay",
+            name = "Show connection error overlays",
+            description = "Adds overlay warnings given WebSocket connection errors",
+            position = 3,
+            section = wsSection
+    )
+    default boolean displayErrorOverlay() { return true; }
 }
