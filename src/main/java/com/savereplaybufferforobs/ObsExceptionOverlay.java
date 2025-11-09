@@ -5,6 +5,7 @@ import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.components.LineComponent;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ObsExceptionOverlay extends OverlayPanel {
     private final SaveReplayBufferForObsConfig config;
@@ -40,5 +41,9 @@ public class ObsExceptionOverlay extends OverlayPanel {
         FontMetrics fontMetrics = graphics.getFontMetrics();
         int stringWidth = fontMetrics.stringWidth(string);
         return new Dimension(stringWidth + offset, 0);
+    }
+
+    public boolean isSameException(ObsException otherException) {
+        return Objects.equals(otherException.getMessage(), obsException.getMessage());
     }
 }

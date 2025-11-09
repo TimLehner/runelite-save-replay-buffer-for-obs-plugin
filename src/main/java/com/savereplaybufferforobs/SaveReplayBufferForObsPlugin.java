@@ -98,6 +98,11 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     @Override
     public void setObsException(ObsException exception) {
         if (obsExceptionOverlay != null) {
+            if (obsExceptionOverlay.isSameException(exception))
+            {
+                // no need to redraw last overlay
+                return;
+            }
             overlayManager.remove(obsExceptionOverlay);
         }
         obsExceptionOverlay = new ObsExceptionOverlay(config, exception);
@@ -240,7 +245,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     @Override
     protected void shutDown()
     {
-        overlayManager.clear();
+        clearObsException();
         if (this.obsClient != null) {
             log.debug("Shutdown OBS Connection");
             this.obsClient.disconnect();
@@ -525,7 +530,6 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
             queuedScreenshotType = null;
             shouldTakeScreenshot = false;
         }
-
     }
 
 }

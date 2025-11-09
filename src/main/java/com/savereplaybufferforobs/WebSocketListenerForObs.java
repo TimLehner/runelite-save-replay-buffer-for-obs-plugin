@@ -142,7 +142,7 @@ public class WebSocketListenerForObs extends WebSocketListener {
 
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        log.info("Received text: {}", text);
+        log.debug("Received text: {}", text);
         ObsV5Message response = gson.fromJson(text, ObsV5Message.class);
         if (response.op == 0) {
             HelloData helloData = gson.fromJson(response.d, HelloData.class);
@@ -180,4 +180,14 @@ public class WebSocketListenerForObs extends WebSocketListener {
             ));
         }
     }
+
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        log.info("WebSocket failed: {}", t.getMessage());
+        exceptionsDisplay.setObsException(new ObsException(
+                "Unable to connect to the OBS WebSocket Server. Is OBS running and configured?"
+        ));
+    }
+
+
 }
