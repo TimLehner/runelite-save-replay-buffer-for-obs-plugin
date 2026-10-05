@@ -2,10 +2,13 @@ package com.savereplaybufferforobs;
 
 import com.google.gson.Gson;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
+import java.util.Map;
 
+@Slf4j
 public class WebSocketClientForObs {
     private final String websocketUrl;
     private final String password;
@@ -18,7 +21,7 @@ public class WebSocketClientForObs {
     private DisplaysExceptions exceptionsDisplay;
 
     @Setter
-    private boolean isConnected;
+    private volatile boolean isConnected;
 
     private class ObsRequest {
         private final int op = 6;
@@ -57,6 +60,16 @@ public class WebSocketClientForObs {
 
     public void saveReplayBuffer() {
         makeOBSRequest("SaveReplayBuffer", "runelite-clip-req", new Object());
+    }
+
+    public void saveClip(int durationSeconds) {
+        ObsRequest request = new ObsRequest("CallVendorRequest", "runelite-duration-req", Map.of(
+                "vendorName", "replay-buffer-pro", "requestType", "SaveClip",
+                "requestData", Map.of("durationSeconds", durationSeconds)));
+        if (!isConnected || !webSocket.send(gson.toJson(request))) {
+            log.warn("Clip of {} seconds not requested: OBS is not connected", durationSeconds);
+            exceptionsDisplay.showChatMessage("Your replay clip wasn't saved because OBS isn't connected.");
+        }
     }
 
     public void connect() {

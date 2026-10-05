@@ -30,12 +30,19 @@ import com.google.gson.Gson;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.Player;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.AnimationID;
 import net.runelite.api.gameval.VarbitID;
+import net.runelite.client.chat.ChatColorType;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -71,7 +78,7 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     @Inject
     private SaveReplayBufferForObsConfig config;
 
-    private WebSocketClientForObs obsClient;
+    private volatile WebSocketClientForObs obsClient;
 
     @Inject
     private ScheduledExecutorService scheduledExecutorService;
@@ -88,6 +95,11 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     private ObsExceptionOverlay obsExceptionOverlay = null;
 
     private ScheduledFuture<?> healthcheck;
+
+    @Inject
+    private ChatMessageManager chatMessageManager;
+
+    private ActivityCapture activityCapture;
 
     @Provides
     SaveReplayBufferForObsConfig getConfig(ConfigManager configManager)
@@ -113,6 +125,20 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     public void clearObsException() {
         overlayManager.remove(obsExceptionOverlay);
         obsExceptionOverlay = null;
+    }
+
+    @Override
+    public void showChatMessage(String message)
+    {
+        log.debug("{}", message);
+        if (!config.chatMessages())
+        {
+            return;
+        }
+        chatMessageManager.queue(QueuedMessage.builder()
+            .type(ChatMessageType.CONSOLE)
+            .runeLiteFormattedMessage(new ChatMessageBuilder().append(ChatColorType.HIGHLIGHT).append(message).build())
+            .build());
     }
 
     protected enum EventType
@@ -174,6 +200,11 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
 
     private void saveReplayBuffer(EventType eventType)
     {
+        if (activityCapture.inEnabledActivity(config))
+        {
+            log.debug("Skipping {} save: the activity capture covers it", eventType);
+            return;
+        }
         log.debug("Attempting to save OBS Replay Buffer");
         scheduledExecutorService.schedule(obsClient::saveReplayBuffer, getDelayTime(eventType), TimeUnit.SECONDS);
     }
@@ -245,11 +276,13 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     {
         log.debug("Startup OBS Connection");
         reconnect();
+        activityCapture = new ActivityCapture(scheduledExecutorService, System::nanoTime, seconds -> obsClient.saveClip(seconds), this::showChatMessage);
     }
 
     @Override
     protected void shutDown()
     {
+        activityCapture.cancel();
         clearObsException();
         if (this.obsClient != null) {
             log.debug("Shutdown OBS Connection");
@@ -495,8 +528,23 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
     }
 
     @Subscribe
+    public void onGameStateChanged(GameStateChanged event)
+    {
+        // Logging out or hopping leaves the activity; a lost connection may reconnect into it.
+        if (event.getGameState() == GameState.LOGIN_SCREEN || event.getGameState() == GameState.HOPPING)
+        {
+            activityCapture.exited(event.getGameState() == GameState.HOPPING ? "hopped worlds" : "logged out", config);
+        }
+    }
+
+    @Subscribe
     public void onGameTick(GameTick event)
     {
+        if (client.getGameState() == GameState.LOGGED_IN && client.getLocalPlayer() != null)
+        {
+            activityCapture.locationChanged(WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation()),
+                client.getVarbitValue(VarbitID.RAIDS_CLIENT_INDUNGEON) == 1, config);
+        }
         if (!shouldTakeScreenshot)
         {
             return;

@@ -2,6 +2,7 @@ package com.savereplaybufferforobs;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -13,6 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -26,6 +28,11 @@ public class WebSocketListenerForObs extends WebSocketListener {
     private final DisplaysExceptions exceptionsDisplay;
 
     private final WebSocketClientForObs client;
+    // Replay Buffer Pro SaveClip error codes the player can act on.
+    private static final Map<String, String> CLIP_ERROR_HELP = Map.of(
+        "buffer-inactive", "The OBS replay buffer wasn't running; start it in OBS.",
+        "save-refused", "OBS refused the save; check that recording isn't paused.",
+        "unavailable", "OBS was shutting down.");
 
     public WebSocketListenerForObs(WebSocketClientForObs client, Gson gson, String password, DisplaysExceptions displaysExceptions) {
         this.client = client;
@@ -76,7 +83,21 @@ public class WebSocketListenerForObs extends WebSocketListener {
     private static class RequestResponse {
         public String requestId;
         public String requestType;
-        private Object responseData;
+        private JsonObject responseData;
+        private Status requestStatus;
+    }
+
+    private static class Status {
+        boolean result;
+        String comment;
+    }
+
+    // Replay Buffer Pro's SaveClip reply.
+    private static class ClipResult {
+        boolean accepted;
+        String error;
+        int durationSeconds;
+        boolean clamped;
     }
 
     private static class HealthResponse {
@@ -155,6 +176,10 @@ public class WebSocketListenerForObs extends WebSocketListener {
             client.setConnected(true);
         } else if (response.op == 7) { // Opcode 7: RequestResponse
             RequestResponse responseData = gson.fromJson(response.d, RequestResponse.class);
+            if (Objects.equals(responseData.requestId, "runelite-duration-req")) {
+                handleClipResponse(responseData);
+                return;
+            }
             if (Objects.equals(responseData.requestType, "GetReplayBufferStatus")) {
                 // healthcheck response
                 HealthResponse healthResponse = gson.fromJson(responseData.responseData.toString(), HealthResponse.class);
@@ -167,6 +192,31 @@ public class WebSocketListenerForObs extends WebSocketListener {
                 }
             }
         }
+    }
+
+    private void handleClipResponse(RequestResponse response) {
+        if (response.requestStatus == null || !response.requestStatus.result) {
+            // obs-websocket itself refused, most often because the Replay Buffer Pro vendor is not registered.
+            clipFailed(response.requestStatus == null ? null : response.requestStatus.comment,
+                "Make sure the Replay Buffer Pro OBS plugin is installed and up to date.");
+            return;
+        }
+        ClipResult result = gson.fromJson(response.responseData.get("responseData"), ClipResult.class);
+        if (result == null || !result.accepted) {
+            String error = result == null || result.error == null ? "" : result.error;
+            clipFailed(error, CLIP_ERROR_HELP.getOrDefault(error, "Check that OBS and Replay Buffer Pro are running."));
+            return;
+        }
+        if (result.clamped) {
+            log.warn("Clip shortened to the {}s OBS replay buffer", result.durationSeconds);
+            exceptionsDisplay.showChatMessage("Your replay clip was shortened to " + ActivityCapture.duration(result.durationSeconds)
+                + ", the length of your OBS replay buffer. Increase it in OBS to capture whole activities.");
+        }
+    }
+
+    private void clipFailed(String reason, String help) {
+        log.warn("OBS refused the clip request: {}", reason);
+        exceptionsDisplay.showChatMessage("OBS couldn't save your replay clip. " + help);
     }
 
     @Override
@@ -183,6 +233,7 @@ public class WebSocketListenerForObs extends WebSocketListener {
 
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        client.setConnected(false);
         log.info("WebSocket failed: {}", t.getMessage());
         exceptionsDisplay.setObsException(new ObsException(
                 "Unable to connect to the OBS WebSocket Server. Is OBS running and configured?"

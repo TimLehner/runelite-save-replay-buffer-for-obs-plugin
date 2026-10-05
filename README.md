@@ -24,6 +24,28 @@ Once enabled, the plugin will immediately attempt to open a connection to the OB
 you can see the session listed in OBS in the "WebSocket Server Settings".
 
 
+## Full activity captures (Replay Buffer Pro)
+
+With the [Replay Buffer Pro](https://github.com/JoshuaPotter/replay-buffer-pro) OBS plugin installed, the plugin
+can save a clip covering an entire activity instead of the whole buffer. Turn on any of **CoX** (including Challenge Mode),
+**ToB**, **ToA**, **Inferno**, **Colosseum** and **Doom** in the **Replay Buffer Pro** section before entering.
+They are off by default.
+
+- Recording starts when you enter the activity and ends when you leave it, including being sent out after a wipe or
+  death, logging out, or hopping. Room changes and Doom delves stay in the same recording. A lost connection that
+  reconnects into the same run keeps recording; logging back in inside the activity starts a new recording.
+- **Activity pre-padding** (default 1% of the activity length) adds footage before the start. **Activity post-padding**
+  (default 1%) keeps recording after you leave before the clip is saved.
+- Inside an enabled activity, the regular saves (boss kills, deaths, rewards, screenshots and so on) are skipped,
+  because the activity clip covers them.
+- If the OBS replay buffer is shorter than the clip, Replay Buffer Pro saves the whole buffer and the plugin warns you in chat.
+- Unless you turn off **Chat messages**, chat tells you when a recording starts, when its clip will be saved, and when a
+  clip couldn't be saved and what to fix. Details are written to the RuneLite debug log (`--debug`).
+
+Your OBS replay buffer must be long enough for the whole activity plus padding, up to Replay Buffer Pro's maximum of 6 hours.
+The plugin sends OBS WebSocket `CallVendorRequest` with vendor `replay-buffer-pro`, request `SaveClip` and
+`{"durationSeconds": N}`. If OBS reports an unknown vendor, Replay Buffer Pro is missing or too old.
+
 ## Detailed setup instructions
 
 Below is a more detailed step-by-step guide for plugin setup, with reference pictures.

@@ -28,12 +28,45 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Range;
 
 import static com.savereplaybufferforobs.Constants.PLUGIN_IDENTIFIER;
 
 @ConfigGroup(PLUGIN_IDENTIFIER)
 public interface SaveReplayBufferForObsConfig extends Config
 {
+    @ConfigSection(name = "Replay Buffer Pro", description = "Save a clip of each enabled activity, from entering until leaving, using the Replay Buffer Pro OBS plugin", position = 4)
+    String proSection = "replayBufferPro";
+
+    @ConfigItem(keyName = "captureCox", name = "CoX", description = "Save each Chambers of Xeric raid, including Challenge Mode, when you leave.", section = proSection, position = 0)
+    default boolean captureCox() { return false; }
+
+    @ConfigItem(keyName = "captureTob", name = "ToB", description = "Save each Theatre of Blood raid when you leave.", section = proSection, position = 1)
+    default boolean captureTob() { return false; }
+
+    @ConfigItem(keyName = "captureToa", name = "ToA", description = "Save each Tombs of Amascut raid when you leave.", section = proSection, position = 2)
+    default boolean captureToa() { return false; }
+
+    @ConfigItem(keyName = "captureInferno", name = "Inferno", description = "Save each Inferno run when you leave.", section = proSection, position = 3)
+    default boolean captureInferno() { return false; }
+
+    @ConfigItem(keyName = "captureColosseum", name = "Colosseum", description = "Save each Fortis Colosseum run when you leave.", section = proSection, position = 4)
+    default boolean captureColosseum() { return false; }
+
+    @ConfigItem(keyName = "captureDoom", name = "Doom", description = "Save each Doom of Mokhaiotl run, across all delves, when you leave.", section = proSection, position = 5)
+    default boolean captureDoom() { return false; }
+
+    @Range(min = 0, max = 10)
+    @ConfigItem(keyName = "activityPrePercent", name = "Activity pre-padding (%)", description = "Extra lookback before the activity start, as a percentage of duration. Default 1%.", section = proSection, position = 6)
+    default int activityPrePercent() { return 1; }
+
+    @Range(min = 0, max = 10)
+    @ConfigItem(keyName = "activityPostPercent", name = "Activity post-padding (%)", description = "Keep recording this percentage of the activity length after you leave before saving. Default 1%.", section = proSection, position = 7)
+    default int activityPostPercent() { return 1; }
+
+    @ConfigItem(keyName = "chatMessages", name = "Chat messages", description = "Show chat messages when a recording starts or saves, and when a clip couldn't be saved.", section = proSection, position = 8)
+    default boolean chatMessages() { return true; }
+
     @ConfigItem(
             keyName = "checkReplayBufferActive",
             name = "Check if Replay Buffer is active",
