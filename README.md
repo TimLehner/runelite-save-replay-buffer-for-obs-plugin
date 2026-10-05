@@ -1,4 +1,4 @@
-# Runelite Save Replay Buffer For OBS Plugin
+# RuneLite Save Replay Buffer For OBS Plugin
 
 This plugin is designed to automatically save any existing OBS Replay Buffer.
 
@@ -8,11 +8,11 @@ This plugin is designed to automatically save any existing OBS Replay Buffer.
 
 - Never miss a moment! Automatically capture the replay buffer on key events like the Screenshots plugin,
 - Either capture whenever saving screenshots (all) or set specific criteria for videos, such as only video valuable drops over 1m,
-- In-game overlays displaying Error warnings if something is wrosng with the Replay Buffer connections (see [Error Overlays](#Error-Overlays))
+- In-game overlays displaying error warnings if something is wrong with the Replay Buffer connections (see [Error Overlays](#Error-Overlays))
 
 ## Usage
 
-Apart from installing from the Runelite Plugin Hub, this plugin requires:
+Apart from installing from the RuneLite Plugin Hub, this plugin requires:
 
 - [Open Broadcaster Software (OBS) v28+](https://obsproject.com/).
 - OBS configured with an active Replay Buffer (File -> Settings -> Output -> [Setup Replay Buffer as desired])
@@ -107,7 +107,7 @@ Click Generate Password.
 
 Click "Show Connect Info" button and copy your Server Password.
 
-![Image of Websocket Connect Info where you can check and copy your previosuly generated password](./docs/img/ServerPasswordDetails.png)
+![Image of Websocket Connect Info where you can check and copy your previously generated password](./docs/img/ServerPasswordDetails.png)
 
 ### 5. Connect the Plugin to OBS
 
@@ -131,7 +131,7 @@ If everything is set up correctly, you’ll see a successful connection in your 
 
 ### 6. Optional: Fine-Tune Replay Timing
 
-You can add a delay before saving the replay to include action happening after the moment a screenshot would be taken in Runelite.
+You can add a delay before saving the replay to include action happening after the moment a screenshot would be taken in RuneLite.
 This can be useful to also capture live reactions to the event, and not having clips that end too abruptly.
 
 ![Image of Save after delay option highlighted](./docs/img/FineTuneDelay.png)
