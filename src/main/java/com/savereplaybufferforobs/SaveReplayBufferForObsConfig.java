@@ -47,24 +47,27 @@ public interface SaveReplayBufferForObsConfig extends Config
     @ConfigItem(keyName = "captureToa", name = "ToA", description = "Save each Tombs of Amascut raid when you leave.", section = proSection, position = 2)
     default boolean captureToa() { return false; }
 
-    @ConfigItem(keyName = "captureInferno", name = "Inferno", description = "Save each Inferno run when you leave.", section = proSection, position = 3)
+    @ConfigItem(keyName = "captureTfa", name = "TFA", description = "Save each Fractured Archive raid when you leave.", section = proSection, position = 3)
+    default boolean captureTfa() { return false; }
+
+    @ConfigItem(keyName = "captureInferno", name = "Inferno", description = "Save each Inferno run when you leave.", section = proSection, position = 4)
     default boolean captureInferno() { return false; }
 
-    @ConfigItem(keyName = "captureColosseum", name = "Colosseum", description = "Save each Fortis Colosseum run when you leave.", section = proSection, position = 4)
+    @ConfigItem(keyName = "captureColosseum", name = "Colosseum", description = "Save each Fortis Colosseum run when you leave.", section = proSection, position = 5)
     default boolean captureColosseum() { return false; }
 
-    @ConfigItem(keyName = "captureDoom", name = "Doom", description = "Save each Doom of Mokhaiotl run, across all delves, when you leave.", section = proSection, position = 5)
+    @ConfigItem(keyName = "captureDoom", name = "Doom", description = "Save each Doom of Mokhaiotl run, across all delves, when you leave.", section = proSection, position = 6)
     default boolean captureDoom() { return false; }
 
     @Range(min = 0, max = 10)
-    @ConfigItem(keyName = "activityPrePercent", name = "Activity pre-padding (%)", description = "Extra lookback before the activity start, as a percentage of duration. Default 1%.", section = proSection, position = 6)
+    @ConfigItem(keyName = "activityPrePercent", name = "Activity pre-padding (%)", description = "Extra lookback before the activity start, as a percentage of duration. Default 1%.", section = proSection, position = 7)
     default int activityPrePercent() { return 1; }
 
     @Range(min = 0, max = 10)
-    @ConfigItem(keyName = "activityPostPercent", name = "Activity post-padding (%)", description = "Keep recording this percentage of the activity length after you leave before saving. Default 1%.", section = proSection, position = 7)
+    @ConfigItem(keyName = "activityPostPercent", name = "Activity post-padding (%)", description = "Keep recording this percentage of the activity length after you leave before saving. Default 1%.", section = proSection, position = 8)
     default int activityPostPercent() { return 1; }
 
-    @ConfigItem(keyName = "chatMessages", name = "Chat messages", description = "Show chat messages when a recording starts or saves, and when a clip couldn't be saved.", section = proSection, position = 8)
+    @ConfigItem(keyName = "chatMessages", name = "Chat messages", description = "Show chat messages when a recording starts or saves, and when a clip couldn't be saved.", section = proSection, position = 9)
     default boolean chatMessages() { return true; }
 
     @ConfigItem(

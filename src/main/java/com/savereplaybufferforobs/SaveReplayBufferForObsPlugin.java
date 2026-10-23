@@ -543,7 +543,8 @@ public class SaveReplayBufferForObsPlugin extends Plugin implements DisplaysExce
         if (client.getGameState() == GameState.LOGGED_IN && client.getLocalPlayer() != null)
         {
             activityCapture.locationChanged(WorldPoint.fromLocalInstance(client, client.getLocalPlayer().getLocalLocation()),
-                client.getVarbitValue(VarbitID.RAIDS_CLIENT_INDUNGEON) == 1, config);
+                client.getVarbitValue(VarbitID.RAIDS_CLIENT_INDUNGEON) == 1,
+                client.getVarbitValue(VarbitID.TFA_CLIENT_SPECTATE_MODE) == 2, config);
         }
         if (!shouldTakeScreenshot)
         {

@@ -22,6 +22,7 @@ final class ActivityCapture
         COX("Chambers of Xeric", SaveReplayBufferForObsConfig::captureCox),
         TOB("Theatre of Blood", SaveReplayBufferForObsConfig::captureTob),
         TOA("Tombs of Amascut", SaveReplayBufferForObsConfig::captureToa),
+        TFA("Fractured Archive", SaveReplayBufferForObsConfig::captureTfa),
         INFERNO("Inferno", SaveReplayBufferForObsConfig::captureInferno),
         COLOSSEUM("Fortis Colosseum", SaveReplayBufferForObsConfig::captureColosseum),
         DOOM("Doom of Mokhaiotl", SaveReplayBufferForObsConfig::captureDoom);
@@ -64,6 +65,8 @@ final class ActivityCapture
             case 14160: case 14672: case 15698: case 15700: case 14162: case 14164:
             case 15186: case 15188: case 14674: case 14676: case 15184: case 15696:
                 return Activity.TOA;
+            case 16471: case 16214: case 16727: case 16216: case 16728: case 16726: case 16215: case 16472: case 16474:
+                return Activity.TFA;
             case 9043:
                 return Activity.INFERNO;
         }
@@ -78,12 +81,16 @@ final class ActivityCapture
         return null;
     }
 
-    synchronized void locationChanged(WorldPoint point, boolean inCox, SaveReplayBufferForObsConfig config)
+    synchronized void locationChanged(WorldPoint point, boolean inCox, boolean spectatingTfa, SaveReplayBufferForObsConfig config)
     {
         Activity next = inCox ? Activity.COX : activityAt(point);
         if (location == Activity.COLOSSEUM && point.getRegionID() == 7216)
         {
             next = Activity.COLOSSEUM; // Keep the capture through the nearby reward chest.
+        }
+        if (next == Activity.TFA && spectatingTfa)
+        {
+            next = null; // Spectating another team's raid isn't your own activity.
         }
         if (location == next)
         {

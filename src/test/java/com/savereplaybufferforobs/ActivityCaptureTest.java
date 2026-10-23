@@ -23,6 +23,7 @@ public class ActivityCaptureTest
         public boolean captureInferno() { return true; }
         public boolean captureColosseum() { return true; }
         public boolean captureDoom() { return true; }
+        public boolean captureTfa() { return true; }
     };
     private final SaveReplayBufferForObsConfig disabled = new SaveReplayBufferForObsConfig() { };
     private static final WorldPoint OUTSIDE = new WorldPoint(3200, 3200, 0);
@@ -65,7 +66,7 @@ public class ActivityCaptureTest
             now = 0;
             enter(activity);
             now = TimeUnit.SECONDS.toNanos(60);
-            capture.locationChanged(OUTSIDE, false, config);
+            capture.locationChanged(OUTSIDE, false, false, config);
             assertEquals(activity.toString(), 1, callbacks.size());
             run(0);
             assertEquals(activity.toString(), Integer.valueOf(62), requests.get(requests.size() - 1));
@@ -75,27 +76,37 @@ public class ActivityCaptureTest
     @Test
     public void roomChangesDelvesAndTheColosseumChestKeepOneRecording()
     {
-        capture.locationChanged(region(15698), false, config);
-        capture.locationChanged(region(15700), false, config); // ToA room change.
-        capture.locationChanged(region(15184), false, config);
-        capture.locationChanged(new WorldPoint(1300, 9560, 0), false, config); // Straight into Doom ends ToA.
-        capture.locationChanged(new WorldPoint(3400, 6400, 0), false, config); // Next delve.
-        capture.locationChanged(new WorldPoint(3520, 6400, 0), false, config);
+        capture.locationChanged(region(15698), false, false, config);
+        capture.locationChanged(region(15700), false, false, config); // ToA room change.
+        capture.locationChanged(region(15184), false, false, config);
+        capture.locationChanged(new WorldPoint(1300, 9560, 0), false, false, config); // Straight into Doom ends ToA.
+        capture.locationChanged(new WorldPoint(3400, 6400, 0), false, false, config); // Next delve.
+        capture.locationChanged(new WorldPoint(3520, 6400, 0), false, false, config);
         assertEquals(1, callbacks.size());
 
-        capture.locationChanged(new WorldPoint(1820, 3100, 0), false, config); // Colosseum arena ends Doom.
-        capture.locationChanged(new WorldPoint(1800, 3080, 0), false, config); // Reward chest, same region.
+        capture.locationChanged(new WorldPoint(1820, 3100, 0), false, false, config); // Colosseum arena ends Doom.
+        capture.locationChanged(new WorldPoint(1800, 3080, 0), false, false, config); // Reward chest, same region.
         assertEquals(2, callbacks.size());
-        capture.locationChanged(OUTSIDE, false, config);
+        capture.locationChanged(OUTSIDE, false, false, config);
         assertEquals(3, callbacks.size());
+
+        capture.locationChanged(region(16471), false, false, config); // TFA's first room.
+        capture.locationChanged(region(16214), false, false, config); // A boss room.
+        assertEquals(3, callbacks.size());
+        capture.locationChanged(region(16470), false, false, config); // Back out to the lobby.
+        assertEquals(4, callbacks.size());
+
+        capture.locationChanged(region(16471), false, true, config); // Spectating another team.
+        capture.locationChanged(region(16470), false, false, config);
+        assertEquals(4, callbacks.size());
     }
 
     @Test
     public void paddingAndSchedulingLagAreIncluded()
     {
-        capture.locationChanged(region(15698), false, config);
+        capture.locationChanged(region(15698), false, false, config);
         now = TimeUnit.SECONDS.toNanos(100);
-        capture.locationChanged(OUTSIDE, false, config);
+        capture.locationChanged(OUTSIDE, false, false, config);
         assertEquals(Long.valueOf(1000), delays.get(0)); // 1% post-padding.
         assertTrue(requests.isEmpty());
         now = TimeUnit.MILLISECONDS.toNanos(101_500); // 500 ms scheduler lag.
@@ -106,14 +117,14 @@ public class ActivityCaptureTest
     @Test
     public void disabledActivitiesNeverRecordAndTurningOneOffDiscardsTheRecording()
     {
-        capture.locationChanged(region(15698), false, disabled);
+        capture.locationChanged(region(15698), false, false, disabled);
         assertFalse(capture.inEnabledActivity(disabled));
-        capture.locationChanged(OUTSIDE, false, disabled);
+        capture.locationChanged(OUTSIDE, false, false, disabled);
         assertTrue(callbacks.isEmpty());
 
-        capture.locationChanged(region(15698), false, config);
+        capture.locationChanged(region(15698), false, false, config);
         assertTrue(capture.inEnabledActivity(config));
-        capture.locationChanged(OUTSIDE, false, disabled);
+        capture.locationChanged(OUTSIDE, false, false, disabled);
         assertTrue(callbacks.isEmpty());
         assertFalse(capture.inEnabledActivity(config));
     }
@@ -164,7 +175,7 @@ public class ActivityCaptureTest
         };
         setField(plugin, "activityCapture", capture);
         now = TimeUnit.SECONDS.toNanos(200);
-        capture.locationChanged(OUTSIDE, false, config);
+        capture.locationChanged(OUTSIDE, false, false, config);
         plugin.shutDown();
         assertTrue(futures.get(1).isCancelled()); // The pending Doom save.
     }
@@ -174,22 +185,25 @@ public class ActivityCaptureTest
         switch (activity)
         {
             case COX:
-                capture.locationChanged(OUTSIDE, true, config);
+                capture.locationChanged(OUTSIDE, true, false, config);
                 break;
             case TOB:
-                capture.locationChanged(region(12869), false, config);
+                capture.locationChanged(region(12869), false, false, config);
                 break;
             case TOA:
-                capture.locationChanged(region(15698), false, config);
+                capture.locationChanged(region(15698), false, false, config);
                 break;
             case INFERNO:
-                capture.locationChanged(region(9043), false, config);
+                capture.locationChanged(region(9043), false, false, config);
                 break;
             case COLOSSEUM:
-                capture.locationChanged(new WorldPoint(1820, 3100, 0), false, config);
+                capture.locationChanged(new WorldPoint(1820, 3100, 0), false, false, config);
                 break;
             case DOOM:
-                capture.locationChanged(new WorldPoint(1300, 9560, 0), false, config);
+                capture.locationChanged(new WorldPoint(1300, 9560, 0), false, false, config);
+                break;
+            case TFA:
+                capture.locationChanged(region(16471), false, false, config);
                 break;
             default:
                 throw new AssertionError(activity);

@@ -28,11 +28,11 @@ you can see the session listed in OBS in the "WebSocket Server Settings".
 
 With the [Replay Buffer Pro](https://github.com/JoshuaPotter/replay-buffer-pro) OBS plugin installed, the plugin
 can save a clip covering an entire activity instead of the whole buffer. Turn on any of **CoX** (including Challenge Mode),
-**ToB**, **ToA**, **Inferno**, **Colosseum** and **Doom** in the **Replay Buffer Pro** section before entering.
+**ToB**, **ToA**, **TFA** (The Fractured Archive), **Inferno**, **Colosseum** and **Doom** in the **Replay Buffer Pro** section before entering.
 They are off by default.
 
 - Recording starts when you enter the activity and ends when you leave it, including being sent out after a wipe or
-  death, logging out, or hopping. Room changes and Doom delves stay in the same recording. A lost connection that
+  death, logging out, or hopping. Room changes and Doom delves stay in the same recording. Spectating another team's TFA raid isn't recorded. A lost connection that
   reconnects into the same run keeps recording; logging back in inside the activity starts a new recording.
 - **Activity pre-padding** (default 1% of the activity length) adds footage before the start. **Activity post-padding**
   (default 1%) keeps recording after you leave before the clip is saved.
